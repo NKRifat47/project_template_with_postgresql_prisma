@@ -1,17 +1,7 @@
 import { Router } from "express";
 
-
-
-
-
-
-
-
 export const router = Router();
-const moduleRoutes = [
-
-
-];
+const moduleRoutes = [];
 
 moduleRoutes.forEach((route) => {
   router.use(route.path, route.route);
