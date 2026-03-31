@@ -12,42 +12,48 @@ import { envVars } from "./env.js";
  * @returns {multer.Multer} - Multer instance
  */
 export const createMulterUpload = ({
-    folder = "others",
-    allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx/,
-    maxSize = 5 * 1024 * 1024
+  folder = "others",
+  allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx/,
+  maxSize = 5 * 1024 * 1024,
 } = {}) => {
-    const uploadPath = path.join(process.cwd(), "uploads", folder);
+  const uploadPath = path.join(process.cwd(), "uploads", folder);
 
-    // Ensure the directory exists
-    if (!fs.existsSync(uploadPath)) {
-        fs.mkdirSync(uploadPath, { recursive: true });
+  // Ensure the directory exists
+  if (!fs.existsSync(uploadPath)) {
+    fs.mkdirSync(uploadPath, { recursive: true });
+  }
+
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      const ext = path.extname(file.originalname);
+      cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+    },
+  });
+
+  const fileFilter = (req, file, cb) => {
+    const extname = allowedTypes.test(
+      path.extname(file.originalname).toLowerCase(),
+    );
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+      return cb(null, true);
+    } else {
+      cb(
+        new Error(
+          `Error: File type not allowed! Allowed types are: ${allowedTypes}`,
+        ),
+      );
     }
+  };
 
-    const storage = multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, uploadPath);
-        },
-        filename: (req, file, cb) => {
-            const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-            const ext = path.extname(file.originalname);
-            cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-        },
-    });
-
-    const fileFilter = (req, file, cb) => {
-        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimetype = allowedTypes.test(file.mimetype);
-
-        if (extname && mimetype) {
-            return cb(null, true);
-        } else {
-            cb(new Error(`Error: File type not allowed! Allowed types are: ${allowedTypes}`));
-        }
-    };
-
-    return multer({
-        storage: storage,
-        limits: { fileSize: maxSize },
-        fileFilter: fileFilter,
-    });
+  return multer({
+    storage: storage,
+    limits: { fileSize: maxSize },
+    fileFilter: fileFilter,
+  });
 };

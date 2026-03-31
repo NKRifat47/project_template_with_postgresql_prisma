@@ -16,13 +16,13 @@ export const createUserTokens = (user) => {
   const accessToken = generateToken(
     jwtPayload,
     envVars.JWT_SECRET_TOKEN,
-    envVars.JWT_EXPIRES_IN
+    envVars.JWT_EXPIRES_IN,
   );
 
   const refreshToken = generateToken(
     jwtPayload,
     envVars.JWT_REFRESH_TOKEN,
-    envVars.JWT_REFRESH_EXPIRES_IN
+    envVars.JWT_REFRESH_EXPIRES_IN,
   );
 
   return { accessToken, refreshToken };
@@ -31,11 +31,11 @@ export const createUserTokens = (user) => {
 
 export const createNewAccessTokenUsingRefreshToken = async (
   prisma,
-  refreshToken
+  refreshToken,
 ) => {
   const verifyRefreshToken = verifyToken(
     refreshToken,
-    envVars.JWT_REFRESH_TOKEN
+    envVars.JWT_REFRESH_TOKEN,
   );
 
   const isUser = await prisma.user.findUnique({
@@ -43,10 +43,7 @@ export const createNewAccessTokenUsingRefreshToken = async (
   });
 
   if (!isUser) {
-    throw new DevBuildError(
-      "User does not exist",
-      StatusCodes.BAD_REQUEST
-    );
+    throw new DevBuildError("User does not exist", StatusCodes.BAD_REQUEST);
   }
 
   const jwtPayload = {
@@ -58,7 +55,7 @@ export const createNewAccessTokenUsingRefreshToken = async (
   const accessToken = generateToken(
     jwtPayload,
     envVars.JWT_SECRET_TOKEN,
-    envVars.JWT_EXPIRES_IN
+    envVars.JWT_EXPIRES_IN,
   );
 
   return accessToken;

@@ -5,12 +5,11 @@ import { fileURLToPath } from "url";
 import { envVars } from "../config/env.js";
 import DevBuildError from "../lib/DevBuildError.js";
 
-
 // Needed because __dirname is not available in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-//         MAIL TRANSPORTER  
+//         MAIL TRANSPORTER
 
 const transporter = nodemailer.createTransport({
   host: envVars.EMAIL_SENDER.SMTP_HOST,
@@ -22,7 +21,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// SEND EMAIL      
+// SEND EMAIL
 
 export const sendEmail = async ({
   to,
@@ -35,7 +34,7 @@ export const sendEmail = async ({
     const templatePath = path.join(
       __dirname,
       "template",
-      `${templateName}.ejs`
+      `${templateName}.ejs`,
     );
 
     const html = await ejs.renderFile(templatePath, templateData);

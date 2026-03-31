@@ -2,14 +2,7 @@ import { Prisma } from "@prisma/client";
 import { AppError } from "../errorHelper/appError.js";
 import { envVars } from "../config/env.js";
 
-
-
-export const globalErrorHandler = (
-  err,
-  req,
-  res,
-  next
-) => {
+export const globalErrorHandler = (err, req, res, next) => {
   if (envVars.NODE_ENV === "development") {
     console.error(err);
   }

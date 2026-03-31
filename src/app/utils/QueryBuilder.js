@@ -1,8 +1,5 @@
 import { excludeFields } from "../constant.js";
 
-
-
-
 export class QueryBuilder {
   constructor(query) {
     this.query = query;
@@ -17,7 +14,18 @@ export class QueryBuilder {
     const filters = { ...this.query };
 
     // Remove standard internal fields and manually excluded fields
-    const fieldsToExclude = ["searchTerm", "searchParam", "sort", "orderBy", "page", "limit", "fields", "skip", "take", ...excludeFields];
+    const fieldsToExclude = [
+      "searchTerm",
+      "searchParam",
+      "sort",
+      "orderBy",
+      "page",
+      "limit",
+      "fields",
+      "skip",
+      "take",
+      ...excludeFields,
+    ];
     fieldsToExclude.forEach((field) => delete filters[field]);
 
     Object.entries(filters).forEach(([key, value]) => {
@@ -57,12 +65,11 @@ export class QueryBuilder {
     return this;
   }
 
-
   search(searchConfig = []) {
-    const searchTerm = this.query.searchTerm || this.query.searchParam ;
+    const searchTerm = this.query.searchTerm || this.query.searchParam;
     if (!searchTerm || !searchConfig.length) return this;
 
-    this.where.OR = searchConfig.map(field => {
+    this.where.OR = searchConfig.map((field) => {
       // Normal field
       if (typeof field === "string") {
         return {
@@ -80,7 +87,7 @@ export class QueryBuilder {
 
         return {
           [relation]: {
-            OR: relationFields.map(rf => ({
+            OR: relationFields.map((rf) => ({
               [rf]: {
                 contains: searchTerm,
                 mode: "insensitive",
@@ -112,7 +119,10 @@ export class QueryBuilder {
         if (parts.length > 1) {
           column = parts[0];
           order = parts[1].toLowerCase() === "desc" ? "desc" : "asc";
-        } else if (field.toLowerCase() === "desc" || field.toLowerCase() === "asc") {
+        } else if (
+          field.toLowerCase() === "desc" ||
+          field.toLowerCase() === "asc"
+        ) {
           // If only "desc" is passed, use default field
           return { [defaultSort]: field.toLowerCase() };
         }

@@ -7,12 +7,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Patient {
-  id    String  @id @default(uuid())
-  phone String  @unique
-  name  String?
-  age   Int?
+enum UserRole {
+  SYSTEM_OWNER   @map("system_owner")
+  BUSINESS_OWNER @map("business_owner")
+  STAFF          @map("staff")
+  CUSTOMER       @map("customer")
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum OAuthProvider {
+  email
+  google
+  facebook
+  apple
+}
+
+enum OrderStatus {
+  pending
+  paid
+  failed
+  refunded
+  cancelled
+}
+
+model User {
+  id                   String        @id @default(uuid())
+  name                 String
+  email                String        @unique
+  passwordHash         String?
+  avatarUrl            String?
+  avatarUrlPath        String?
+  role                 UserRole      @default(CUSTOMER)
+  isVerified           Boolean       @default(false)
+  oauthProvider        OAuthProvider @default(email)
+  oauthProviderId      String?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  forgotPasswordStatus Boolean       @default(false)
+  orders               Order[]
+
+  @@index([role])
+}
+
+
+model Order {
+  id            String      @id @default(uuid())
+  userId        String
+  amount        Int
+  currency      String      @default("usd")
+  status        OrderStatus @default(pending)
+  stripeSession String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }

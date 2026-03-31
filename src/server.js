@@ -1,7 +1,8 @@
 import app from "./app.js";
 import { envVars } from "./app/config/env.js";
+import { connectRedis } from "./app/config/redis.config.js";
 import prisma from "./app/prisma/client.js";
-
+import { seedDatabase } from "./app/prisma/seed.js";
 
 let server;
 
@@ -10,6 +11,13 @@ const PORT = envVars.PORT || 8001;
 const startServer = async () => {
   try {
     console.log(`Environment: ${envVars.NODE_ENV}`);
+
+    // Connect Redis
+    await connectRedis();
+    console.log("Redis Connected Successfully 🚚✅");
+
+    // Seed Database
+    await seedDatabase();
 
     // Start server
     server = app.listen(PORT, () => {
@@ -28,10 +36,7 @@ startServer();
  * 🔴 Unhandled Promise Rejection
  */
 process.on("unhandledRejection", async (err) => {
-  console.error(
-    "Unhandled Rejection Detected... server shutting down...",
-    err
-  );
+  console.error("Unhandled Rejection Detected... server shutting down...", err);
 
   if (server) {
     server.close(async () => {
@@ -48,10 +53,7 @@ process.on("unhandledRejection", async (err) => {
  * 🔴 Uncaught Exception
  */
 process.on("uncaughtException", async (err) => {
-  console.error(
-    "Uncaught Exception Detected... server shutting down...",
-    err
-  );
+  console.error("Uncaught Exception Detected... server shutting down...", err);
 
   if (server) {
     server.close(async () => {

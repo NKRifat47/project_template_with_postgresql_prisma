@@ -17,4 +17,3 @@ export const setAuthCookie = (res, tokenInfo) => {
     });
   }
 };
-

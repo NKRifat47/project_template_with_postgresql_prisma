@@ -9,8 +9,6 @@ import { router } from "./app/router/index.js";
 import passport from "passport";
 import "./app/config/passport.config.js";
 
-
-
 dotenv.config();
 
 const app = express();
@@ -27,7 +25,7 @@ app.use("/uploads", express.static("uploads"));
 
 // Health check
 app.get("/", (req, res) => {
-  res.send("Doctor AI backend is running");
+  res.send("Hello, World!");
 });
 
 // 404 handler (must be after routes)
@@ -37,5 +35,3 @@ app.use(notFound);
 app.use(globalErrorHandler);
 
 export default app;
-
-
