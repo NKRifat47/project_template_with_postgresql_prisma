@@ -19,7 +19,7 @@ export const OtpService = {
       where: { email },
       select: {
         id: true,
-        isVerified: true,
+        is_verified: true,
         first_name: true,
         last_name: true,
       },
@@ -29,7 +29,7 @@ export const OtpService = {
       throw new DevBuildError("User not found", 404);
     }
 
-    if (user.isVerified) {
+    if (user.is_verified) {
       throw new DevBuildError("You are already verified", 401);
     }
 
@@ -57,7 +57,7 @@ export const OtpService = {
       where: { email },
       select: {
         id: true,
-        isVerified: true,
+        is_verified: true,
       },
     });
 
@@ -65,7 +65,7 @@ export const OtpService = {
       throw new DevBuildError("User not found", 404);
     }
 
-    if (user.isVerified) {
+    if (user.is_verified) {
       throw new DevBuildError("You are already verified", 401);
     }
 
@@ -82,7 +82,7 @@ export const OtpService = {
 
     await prisma.users.update({
       where: { email },
-      data: { isVerified: true },
+      data: { is_verified: true },
     });
     await redisClient.del(redisKey);
   },
@@ -97,7 +97,7 @@ export const OtpService = {
       throw new DevBuildError("User not found", 404);
     }
 
-    if (!user.isVerified) {
+    if (!user.is_verified) {
       throw new DevBuildError("User is not verified", 401);
     }
 
@@ -143,11 +143,6 @@ export const OtpService = {
       envVars.JWT_SECRET_TOKEN,
       { expiresIn: "10m" },
     );
-
-    await prisma.users.update({
-      where: { email },
-      data: { forgotPasswordStatus: true },
-    });
 
     await redisClient.del(redisKey);
     return resetToken;

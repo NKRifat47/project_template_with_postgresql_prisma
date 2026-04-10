@@ -33,7 +33,7 @@ passport.use(
           return done(null, false, { message: "Incorrect password." });
         }
 
-        if (!user.isVerified) {
+        if (!user.is_verified) {
           return done(null, false, {
             message: "User is not verified. Please verify your email.",
           });

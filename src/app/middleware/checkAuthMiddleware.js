@@ -41,7 +41,7 @@ export const checkAuthMiddleware =
 
       const isResetRoute = req.originalUrl.includes("/reset-password");
 
-      if (!user.isVerified && !isResetRoute) {
+      if (!user.is_verified && !isResetRoute) {
         return res.status(403).json({
           success: false,
           message: "User is not verified. Please verify your email.",
