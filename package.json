@@ -1,5 +1,5 @@
 {
-  "name": "AI-driven-voice-ordering-and-calling-platform",
+  "name": "project_template_with_postgresql_prisma",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
